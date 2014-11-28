@@ -49,7 +49,7 @@
 		return $el;
 	};
 
-    var pluginName = 'csssrValidation',
+	var pluginName = 'csssrValidation',
 
 		dataOptionsKeys = [
 
@@ -72,63 +72,65 @@
 			'min-attribute',
 			'max-attribute',
 
-			'remove-invalid-class-on'
+			'remove-invalid-class-on',
+			'validate-fields-on'
 
 		];
 
-        $[pluginName] = {
-			defaults: {
+		$[pluginName] = $[pluginName] || {};
 
-				requiredSelector: '[required]',
-				numericSelector: '[inputmode="numeric"]',
-				inputmodeSelector: 'input[inputmode], input[data-input-pattern], textarea[data-input-pattern]',
-				allowEmptySelector: '[data-allow-empty]',
-				minMaxSelector: 'input[min], input[max]',
+		$[pluginName].defaults = {
 
-				patternAttribute: 'pattern',
-				inputPatternAttribute: 'data-input-pattern',
-				inputmodeAttribute: 'inputmode',
-				minlengthAttribute: 'minlength',
-				maxlengthAttribute: 'maxlength',
-				minAttribute: 'min',
-				maxAttribute: 'max',
+			requiredSelector: '[required], .js-required',
+			numericSelector: '[inputmode="numeric"]',
+			inputmodeSelector: 'input[inputmode], input[data-input-pattern], textarea[data-input-pattern]',
+			allowEmptySelector: '[data-allow-empty]',
+			minMaxSelector: 'input[min], input[max]',
 
-				removeInvalidClassOn: 'change input paste',
+			patternAttribute: 'pattern',
+			inputPatternAttribute: 'data-input-pattern',
+			inputmodeAttribute: 'inputmode',
+			minlengthAttribute: 'minlength',
+			maxlengthAttribute: 'maxlength',
+			minAttribute: 'min',
+			maxAttribute: 'max',
 
-				masks: {
-					numbered: {
-						has: function ($field) {
-							return $field.hasClass('numbered');
-						},
-						valid: function ($field) {
-							return !$field.hasClass('numbered_error');
-						}
+			removeInvalidClassOn: 'focus',
+			validateFieldsOn: false,
+
+			masks: {
+				numbered: {
+					has: function ($field) {
+						return $field.hasClass('numbered');
 					},
-					inputmask: {
-						selector: '[data-inputmask]',
-						has: function ($field) {
-							return $field.inputmask('getemptymask').length;
-						},
-						valid: function ($field) {
-							return $field.inputmask('isComplete');
-						},
-						init: function ($field) {
-							$field.inputmask();
-						}
+					valid: function ($field) {
+						return !$field.hasClass('numbered_error');
 					}
 				},
-				patterns: {
-					email:
-						/^[a-zа-яё0-9][a-zа-яё0-9\.-]*[a-zа-яё0-9]?@[a-zа-яё0-9][a-zа-яё\.-]*[a-zа-яё0-9]\.[a-zа-яё][a-zа-яё\.]*[a-z]$/i,
-					url: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-				},
-				inputPatterns: {
-					cyrillic: /[а-яё\s]/i,
-					latin: /[a-z\s]/i,
-					numeric: /[0-9]/,
-					letters: /[\w\s]/i,
-					email: /[a-zа-яё0-9\.\-_@]/i
+				inputmask: {
+					selector: '[data-inputmask]',
+					has: function ($field) {
+						return $field.inputmask('getemptymask').length;
+					},
+					valid: function ($field) {
+						return $field.inputmask('isComplete');
+					},
+					init: function ($field) {
+						$field.inputmask();
+					}
 				}
+			},
+			patterns: {
+				email:
+					/^[a-zа-яё0-9][a-zа-яё0-9\.-]*[a-zа-яё0-9]?@[a-zа-яё0-9][a-zа-яё\.-]*[a-zа-яё0-9]\.[a-zа-яё][a-zа-яё\.]*[a-z]$/i,
+				url: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+			},
+			inputPatterns: {
+				cyrillic: /[а-яё\s]/i,
+				latin: /[a-z\s]/i,
+				numeric: /[0-9]/,
+				letters: /[a-zа-яё\s]/i,
+				email: /[a-zа-яё0-9\.\-_@]/i
 			}
 		};
 
@@ -143,6 +145,14 @@
 				}
 
 				return valid;
+
+			},
+			_onValidateField: function () {
+
+				var $this = $(this),
+					base = $this.closest('form').data(pluginName);
+
+				methods.validate.apply(base, [$this]);
 
 			},
 			_onRemoveInvalidClass: function () {
@@ -280,24 +290,37 @@
 			},
 			validate: function ($fields) {
 
-				var base = this;
-					$fields = $fields || base.element.find(base.options.requiredSelector),
+				var base = this,
+					options = $.extend({}, base.options, $[pluginName].globals || {}),
+					selector = $.grep([
+						options.requiredSelector || '',
+						options.numericSelector || '',
+						options.minMaxSelector || '',
+						options.inputmodeSelector || ''
+					], function (el) {
+						return el !== '';
+					}).join(','),
 					valid = true;
+
+				$fields = $fields ? $fields.filter(selector) : base.element.find(selector);
 
 				$fields.each(function () {
 
 					var $field = $(this),
-						mask = methods.getMask($field, base.options.masks),
+						fieldOptions = methods.getDataOptions($field),
+						mask = methods.getMask($field, options.masks),
 						pattern = mask ?
 							false :
-							methods.getPattern.apply(base, [$field, 'type', base.options.patternAttribute, base.options.patterns]),
-						allowEmpty = $field.filter(base.options.allowEmptySelector).length,
-						maxlength = $field.attr(base.options.maxlengthAttribute) || Number.POSITIVE_INFINITY,
-						minlength = $field.attr(base.options.minlengthAttribute) || 0,
+							methods.getPattern.apply(base, [$field, 'type', options.patternAttribute, options.patterns]),
+						allowEmpty =
+							$field.filter(options.allowEmptySelector).length ||
+							!$field.filter(options.requiredSelector).length,
+						maxlength = $field.attr(options.maxlengthAttribute) || Number.POSITIVE_INFINITY,
+						minlength = $field.attr(options.minlengthAttribute) || 0,
 						valLength = $field.val().length,
-						isNumeric = $field.filter(base.options.numericSelector).length,
-						min = $field.attr(base.options.minAttribute),
-						max = $field.attr(base.options.maxAttribute),
+						isNumeric = $field.filter(options.numericSelector).length,
+						min = $field.attr(options.minAttribute),
+						max = $field.attr(options.maxAttribute),
 						fieldValid = (
 							(allowEmpty && !$field.val()) ||
 							(mask && mask.valid($field)) ||
@@ -310,8 +333,19 @@
 							(max === void 0 || Number(max) >= Number($field.val()))
 						);
 
-					methods.toggleClass($field, !fieldValid, base.options.invalidClass, base.options.invalidClassTarget);
-					methods.toggleClass($field, fieldValid, base.options.validClass, base.options.validClassTarget);
+					methods.toggleClass(
+						$field,
+						!fieldValid,
+						fieldOptions.invalidClass || options.invalidClass,
+						fieldOptions.invalidClassTarget || options.invalidClassTarget
+					);
+
+					methods.toggleClass(
+						$field,
+						fieldValid,
+						fieldOptions.validClass || options.validClass,
+						fieldOptions.validClassTarget || options.validClassTarget
+					);
 
 					valid = valid && fieldValid;
 
@@ -322,17 +356,17 @@
 			}
 		};
 
-    function CsssrValidation(element, options) {
+	function CsssrValidation(element, options) {
 
-        this.element = element;
-        this.options = $.extend({}, $[pluginName].defaults, methods.getDataOptions(element), options);
-        this.init();
+		this.element = element;
+		this.options = $.extend({}, $[pluginName].defaults, methods.getDataOptions(element), options);
+		this.init();
 
-    }
+	}
 
-    CsssrValidation.prototype = {
+	CsssrValidation.prototype = {
 
-        init: function () {
+		init: function () {
 
 			var _this = this;
 
@@ -348,6 +382,10 @@
 				_this.element.on(_this.options.removeInvalidClassOn, 'input, textarea', methods._onRemoveInvalidClass);
 			}
 
+			if (_this.options.validateFieldsOn) {
+				_this.element.on(_this.options.validateFieldsOn, 'input, textarea', methods._onValidateField);
+			}
+
 			$.each(_this.options.masks, function (key, mask) {
 
 				if (mask.selector && $.fn[key] !== void 0) {
@@ -356,40 +394,40 @@
 
 			});
 
-        },
-        destroy: function () {
-            this.element.off('submit.' + pluginName, methods._onSubmit)
-                        .removeData(pluginName);
-        }
+		},
+		destroy: function () {
+			this.element.off('submit.' + pluginName, methods._onSubmit)
+						.removeData(pluginName);
+		}
 
-    };
+	};
 
-    $.fn[pluginName] = function (options) {
+	$.fn[pluginName] = function (options) {
 
-        var args = arguments;
+		var args = arguments;
 
-        return this.each(function () {
+		return this.each(function () {
 
-            var cached = $.data(this, pluginName);
-            if (cached) {
-                if (options && options.substring) {
-                    cached[options].apply(cached, [].splice.call(args, 1));
+			var cached = $.data(this, pluginName);
+			if (cached) {
+				if (options && options.substring) {
+					cached[options].apply(cached, [].splice.call(args, 1));
 				}
-                return true;
-            } else if (options && options.substring) {
-                throw new Error(pluginName + ' not available for this DOM element!');
+				return true;
+			} else if (options && options.substring) {
+				throw new Error(pluginName + ' not available for this DOM element!');
 			}
 
-            cached = $(this);
+			cached = $(this);
 
-            cached.data(pluginName, new CsssrValidation(cached, options));
+			cached.data(pluginName, new CsssrValidation(cached, options));
 
-            return true;
+			return true;
 
-        });
-    };
+		});
+	};
 
-	$('body').onFirst('submit', 'form[data-validate]:not([data-' + pluginName + '])', function (e) {
+	$('body').onFirst('submit', 'form[data-validate]:not([novalidate])', function (e) {
 
 		e.preventDefault();
 		e.stopImmediatePropagation();
