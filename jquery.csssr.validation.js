@@ -134,16 +134,15 @@
 				}
 			},
 			patterns: {
-				email:
-					/^[a-zа-яё0-9][a-zа-яё0-9\.-]*[a-zа-яё0-9]?@[a-zа-яё0-9][a-zа-яё\.-]*[a-zа-яё0-9]\.[a-zа-яё][a-zа-яё\.]*[a-z]$/i,
+				email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zа-яёії\-0-9]+\.)+[a-zа-яёії]{2,}))$/i,
 				url: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
 			},
 			inputPatterns: {
-				cyrillic: /[а-яё\s]/i,
+				cyrillic: /[а-яёії\s]/i,
 				latin: /[a-z\s]/i,
 				numeric: /[0-9]/,
-				letters: /[a-zа-яё\s]/i,
-				email: /[a-zа-яё0-9\.\-_@]/i,
+				letters: /[a-zа-яёії\s]/i,
+				email: /[a-zа-яёії0-9\.\-_@]/i,
 				phone: /[\+0-9]/
 			}
 		};
@@ -381,7 +380,7 @@
 
 						fieldOptions.validClass ||
 							options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
-							options.invalidClass,
+							options.validClass,
 
 						fieldOptions.validClassTarget ||
 							options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
@@ -400,7 +399,14 @@
 	function CsssrValidation(element, options) {
 
 		this.element = element;
-		this.options = $.extend(true, {}, $[pluginName].defaults, methods.getDataOptions(element), options);
+		this.options = $.extend(
+			true,
+			{},
+			$[pluginName].defaults,
+			$[pluginName].globals,
+			methods.getDataOptions(element),
+			options
+		);
 		this.init();
 
 	}
