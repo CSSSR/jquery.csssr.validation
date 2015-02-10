@@ -85,7 +85,8 @@
 			'max-attribute',
 
 			'remove-invalid-class-on',
-			'validate-fields-on'
+			'validate-fields-on',
+			'silent-validation-on'
 
 		];
 
@@ -110,6 +111,7 @@
 
 			removeInvalidClassOn: 'focus',
 			validateFieldsOn: false,
+			silentValidationOn: false,
 
 			masks: {
 				numbered: {
@@ -163,6 +165,14 @@
 				}
 
 				return valid;
+
+			},
+			_onSilentValidate: function () {
+
+				var $this = $(this),
+					base = $this.closest('form, [data-validation-container]').data(pluginName);
+
+				base.element.trigger(methods.validate.apply(base, [false, true]) ? 'valid' : 'invalid');
 
 			},
 			_onValidateField: function () {
@@ -307,7 +317,7 @@
 				});
 				return valid;
 			},
-			validate: function ($fields) {
+			validate: function ($fields, silent) {
 
 				var base = this,
 					options = $.extend(true, {}, base.options, $[pluginName].globals || {}),
@@ -361,31 +371,33 @@
 						fieldValid = $(equalTo).val() === $field.val();
 					}
 
-					methods.toggleClass(
-						$field,
-						!fieldValid,
+					if (!silent) {
+						methods.toggleClass(
+							$field,
+							!fieldValid,
 
-						fieldOptions.invalidClass ||
-							options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
-							options.invalidClass,
+							fieldOptions.invalidClass ||
+								options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
+								options.invalidClass,
 
-						fieldOptions.invalidClassTarget ||
-							options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
-							options.invalidClassTarget
-					);
+							fieldOptions.invalidClassTarget ||
+								options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
+								options.invalidClassTarget
+						);
 
-					methods.toggleClass(
-						$field,
-						fieldValid,
+						methods.toggleClass(
+							$field,
+							fieldValid,
 
-						fieldOptions.validClass ||
-							options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
-							options.validClass,
+							fieldOptions.validClass ||
+								options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
+								options.validClass,
 
-						fieldOptions.validClassTarget ||
-							options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
-							options.validClassTarget
-					);
+							fieldOptions.validClassTarget ||
+								options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
+								options.validClassTarget
+						);
+					}
 
 					valid = valid && fieldValid;
 
@@ -400,12 +412,9 @@
 
 		this.element = element;
 		this.options = $.extend(
-			true,
-			{},
-			$[pluginName].defaults,
-			$[pluginName].globals,
-			methods.getDataOptions(element),
-			options
+			true, {},
+			$[pluginName].defaults, $[pluginName].globals,
+			methods.getDataOptions(element), options
 		);
 		this.init();
 
@@ -431,6 +440,10 @@
 
 			if (_this.options.validateFieldsOn) {
 				_this.element.on(_this.options.validateFieldsOn, 'input, textarea', methods._onValidateField);
+			}
+
+			if (_this.options.silentValidationOn) {
+				_this.element.on(_this.options.silentValidationOn, 'input, textarea', methods._onSilentValidate);
 			}
 
 			$.each(_this.options.masks, function (key, mask) {
