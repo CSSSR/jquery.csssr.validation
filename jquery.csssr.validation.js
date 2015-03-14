@@ -412,9 +412,12 @@
 
 		this.element = element;
 		this.options = $.extend(
-			true, {},
-			$[pluginName].defaults, $[pluginName].globals,
-			methods.getDataOptions(element), options
+			true,
+			{},
+			$[pluginName].defaults,
+			$[pluginName].globals,
+			methods.getDataOptions(element),
+			options
 		);
 		this.init();
 
@@ -487,36 +490,41 @@
 		});
 	};
 
-	$('body').onFirst('submit', 'form[data-validate]:not([novalidate])', function (e) {
+	$(function () {
 
-		e.preventDefault();
-		e.stopImmediatePropagation();
+		$('body').onFirst('submit', 'form[data-validate]:not([novalidate])', function (e) {
 
-		$(this)
-			.csssrValidation()
-			.submit();
+			e.preventDefault();
+			e.stopImmediatePropagation();
+
+			$(this)
+				.csssrValidation()
+				.submit();
+
+		});
+
+		$('body').onFirst('validate.csssr', '[data-validation-container]:not([novalidate])', function (e) {
+
+			e.preventDefault();
+			e.stopImmediatePropagation();
+
+			$(this)
+				.csssrValidation()
+				.trigger('validate.csssr');
+
+		});
+
+		$('body').on('click', '[data-validation-trigger]', function () {
+
+			$(this)
+				.closest('[data-validation-container]')
+				.trigger('validate.csssr');
+
+		});
+
+		$('form[data-validate]:not([novalidate]), [data-validation-container]:not([novalidate])').csssrValidation();
 
 	});
 
-	$('body').onFirst('validate.csssr', '[data-validation-container]:not([novalidate])', function (e) {
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-
-		$(this)
-			.csssrValidation()
-			.trigger('validate.csssr');
-
-	});
-
-	$('body').on('click', '[data-validation-trigger]', function () {
-
-		$(this)
-			.closest('[data-validation-container]')
-			.trigger('validate.csssr');
-
-	});
-
-	$('form[data-validate]:not([novalidate]), [data-validation-container]:not([novalidate])').csssrValidation();
 
 })(jQuery);

@@ -1,21 +1,20 @@
 {
-  "name": "jquery.placeholder",
-  "version": "0.1.0",
-  "description": "Useful placeholder for text input and textarea.",
+  "name": "jquery.csssr.validation",
+  "version": "1.0.0.0",
+  "description": "Universal form validator",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GC92/jquery.placeholder"
+    "url": "https://github.com/azanov/jquery.csssr.validation"
   },
   "keywords": [
-    "placeholder",
-    "hint"
+    "validation",
+    "validator"
   ],
-  "author": "GC92",
-  "license": "MIT",
+  "author": "Pavel Azanov",
   "bugs": {
-    "url": "https://github.com/GC92/jquery.placeholder/issues"
+    "url": "https://github.com/azanov/jquery.csssr.validation/issues"
   },
-  "homepage": "https://github.com/GC92/jquery.placeholder",
+  "homepage": "https://github.com/azanov/jquery.csssr.validation",
   "dependencies": {
     "gulp": "^3.8.5",
     "gulp-jscs": "^1.1.2",
