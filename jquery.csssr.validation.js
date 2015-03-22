@@ -1,13 +1,24 @@
-; (function ($) {
-	/*
-		Universal validation plugin
-		(c) 2014 Pavel Azanov, developed for CSSSR
+/*
+	Universal validation plugin
+	(c) 2014 Pavel Azanov, developed for CSSSR
 
-		----
+	----
 
-		Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
-		(c) 2013 Vladimir Zhuravlev, MIT License
-	*/
+	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
+	(c) 2013 Vladimir Zhuravlev, MIT License
+*/
+(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(['jquery'], factory);
+	} else if (typeof exports === 'object') {
+		// Node/CommonJS
+		module.exports = factory(require('jquery'));
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
 
 	function moveHandlerToTop($el, eventName, isDelegated) {
 
@@ -526,5 +537,4 @@
 
 	});
 
-
-})(jQuery);
+}));
