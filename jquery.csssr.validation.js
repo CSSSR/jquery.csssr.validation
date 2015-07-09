@@ -98,7 +98,12 @@
 
 			'remove-invalid-class-on',
 			'validate-fields-on',
-			'silent-validation-on'
+			'silent-validation-on',
+
+			'empty-value-msg',
+			'invalid-value-msg',
+			'empty-msg-target',
+			'invalid-msg-target'
 
 		];
 
@@ -121,6 +126,11 @@
 			minAttribute: 'min',
 			maxAttribute: 'max',
 			typeAttribute: 'type',
+
+			emptyValueMsg: '',
+			emptyMsgTarget: false,
+			invalidValueMsg: '',
+			invalidMsgTarget: false,
 
 			removeInvalidClassOn: 'focus',
 			validateFieldsOn: false,
@@ -311,12 +321,21 @@
 				return result;
 
 			},
+			getTarget: function (exSelector) {
+
+				if (exSelector.indexOf('/') !== -1) {
+					var tmp = exSelector.split('/');
+					return $field[tmp[0]](tmp[1]);
+				} else {
+					return $(exSelector);
+				}
+
+			},
 			toggleClass: function ($field, state, cssClass, target) {
 
 				if (cssClass) {
 					if (target) {
-						var tmp = target.split('/');
-						$field[tmp[0]](tmp[1]).toggleClass(cssClass, state);
+						methods.getTarget(target).toggleClass(cssClass, state);
 					} else {
 						$field.toggleClass(cssClass, state);
 					}
@@ -369,8 +388,9 @@
 						max = $field.attr(options.maxAttribute),
 						equalTo = $field.data('equal-to'),
 						isCheckBox = ($field.attr(options.typeAttribute) || '').toLowerCase() === 'checkbox',
+						isEmpty = !$field.val(),
 						fieldValid = (
-							(allowEmpty && !$field.val()) ||
+							(allowEmpty && isEmpty) ||
 							(isCheckBox && $field.length && $field[0].checked) ||
 							(mask && mask.valid($field)) ||
 							(pattern.length && methods.matchesPatterns($field.val(), pattern)) ||
@@ -399,6 +419,14 @@
 								options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
 								options.invalidClassTarget
 						);
+
+						if (options.emptyValueMsg && options.emptyMsgTarget) {
+							getTarget(options.emptyMsgTarget).text(isEmpty ? options.emptyValueMsg : '');
+						}
+
+						if (options.invalidValueMsg && options.invalidMsgTarget) {
+							getTarget(options.invalidMsgTarget).text(!fieldValid ? options.invalidValueMsg : '');
+						}
 
 						methods.toggleClass(
 							$field,
