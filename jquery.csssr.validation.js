@@ -389,9 +389,8 @@
 						equalTo = $field.data('equal-to'),
 						isCheckBox = ($field.attr(options.typeAttribute) || '').toLowerCase() === 'checkbox',
 						isEmpty = !$field.val(),
-						fieldValid = (
+						fieldValid = isCheckBox ? ($field.length && $field[0].checked) : (
 							(allowEmpty && isEmpty) ||
-							(isCheckBox && $field.length && $field[0].checked) ||
 							(mask && mask.valid($field)) ||
 							(pattern.length && methods.matchesPatterns($field.val(), pattern)) ||
 							(!mask && !pattern.length && valLength > 0)
@@ -420,12 +419,19 @@
 								options.invalidClassTarget
 						);
 
-						if (options.emptyValueMsg && options.emptyMsgTarget) {
-							methods.getTarget($field, options.emptyMsgTarget).text(isEmpty ? options.emptyValueMsg : '');
+						// TODO: normalize the shitty checking
+
+						var emptyValueMsg = fieldOptions.emptyValueMsg || options.emptyValueMsg || false,
+							emptyMsgTarget = fieldOptions.emptyMsgTarget || options.emptyMsgTarget || false,
+							invalidValueMsg = fieldOptions.invalidValueMsg || options.invalidValueMsg || false,
+							invalidMsgTarget = fieldOptions.invalidMsgTarget || options.invalidMsgTarget || false;
+
+						if (emptyValueMsg && emptyMsgTarget) {
+							methods.getTarget($field, emptyMsgTarget).text(isEmpty ? emptyValueMsg : '');
 						}
 
-						if (!isEmpty && options.invalidValueMsg && options.invalidMsgTarget) {
-							methods.getTarget($field, options.invalidMsgTarget).text(!fieldValid ? options.invalidValueMsg : '');
+						if (!isEmpty && invalidValueMsg && invalidMsgTarget) {
+							methods.getTarget($field, invalidMsgTarget).text(!fieldValid ? invalidValueMsg : '');
 						}
 
 						methods.toggleClass(
