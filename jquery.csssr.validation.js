@@ -94,6 +94,7 @@
 			'maxlength-attribute',
 			'min-attribute',
 			'max-attribute',
+			'type-attribute',
 
 			'remove-invalid-class-on',
 			'validate-fields-on',
@@ -119,6 +120,7 @@
 			maxlengthAttribute: 'maxlength',
 			minAttribute: 'min',
 			maxAttribute: 'max',
+			typeAttribute: 'type',
 
 			removeInvalidClassOn: 'focus',
 			validateFieldsOn: false,
@@ -366,8 +368,10 @@
 						min = $field.attr(options.minAttribute),
 						max = $field.attr(options.maxAttribute),
 						equalTo = $field.data('equal-to'),
+						isCheckBox = ($field.attr(options.typeAttribute) || '').toLowerCase() === 'checkbox',
 						fieldValid = (
 							(allowEmpty && !$field.val()) ||
+							(isCheckBox && $field.length && $field[0].checked) ||
 							(mask && mask.valid($field)) ||
 							(pattern.length && methods.matchesPatterns($field.val(), pattern)) ||
 							(!mask && !pattern.length && valLength > 0)
