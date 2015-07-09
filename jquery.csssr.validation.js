@@ -321,7 +321,7 @@
 				return result;
 
 			},
-			getTarget: function (exSelector) {
+			getTarget: function ($field, exSelector) {
 
 				if (exSelector.indexOf('/') !== -1) {
 					var tmp = exSelector.split('/');
@@ -335,7 +335,7 @@
 
 				if (cssClass) {
 					if (target) {
-						methods.getTarget(target).toggleClass(cssClass, state);
+						methods.getTarget($field, target).toggleClass(cssClass, state);
 					} else {
 						$field.toggleClass(cssClass, state);
 					}
@@ -421,11 +421,11 @@
 						);
 
 						if (options.emptyValueMsg && options.emptyMsgTarget) {
-							getTarget(options.emptyMsgTarget).text(isEmpty ? options.emptyValueMsg : '');
+							methods.getTarget($field, options.emptyMsgTarget).text(isEmpty ? options.emptyValueMsg : '');
 						}
 
-						if (options.invalidValueMsg && options.invalidMsgTarget) {
-							getTarget(options.invalidMsgTarget).text(!fieldValid ? options.invalidValueMsg : '');
+						if (!isEmpty && options.invalidValueMsg && options.invalidMsgTarget) {
+							methods.getTarget($field, options.invalidMsgTarget).text(!fieldValid ? options.invalidValueMsg : '');
 						}
 
 						methods.toggleClass(
