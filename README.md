@@ -56,7 +56,8 @@ Let's begin with a simple registration form with four fields: **username**, **em
 1. To initialize the plugin, add the `data-validate` attribute to your form. 
 2. Add the `required` attribute to the fields you want to be checked for empty values.
 3. Set the type of the email field to `email`. 
-4. Using the `data-invalid-class` attribute, define the CSS class which will be added to the field when its value is empty. 5. Link the password & password confirmation fields with the `data-equal-to` attribute:
+4. Using the `data-invalid-class` attribute, define the CSS class which will be added to the field when its value is empty.
+5. Link the password & password confirmation fields with the `data-equal-to` attribute:
 
 ```html
 <form 
