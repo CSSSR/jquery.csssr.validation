@@ -51,9 +51,12 @@ jquery.csssr.validation
 
 ### Quickstart
 
-To initialize the plugin, simply add the `data-validate` attribute to your form. *Keep in mind that you *should not* add the `novalidate` attribute. It will be added automatically once the plugin is initialized.* 
+Let's begin with a simple registration form with four fields: **username**, **email**, **password** and **password confirmation**.
 
-Add the `required` attribute the fields you want to be checked for empty values, and set the css class which will be added to the field when the value is empty using the `data-invalid-class` attribute. 
+1. To initialize the plugin, add the `data-validate` attribute to your form. 
+2. Add the `required` attribute to the fields you want to be checked for empty values.
+3. Set the type of the email field to `email`. 
+4. Using the `data-invalid-class` attribute, define the CSS class which will be added to the field when its value is empty. 5. Link the password & password confirmation fields with the `data-equal-to` attribute:
 
 ```html
 <form 
@@ -71,9 +74,11 @@ Add the `required` attribute the fields you want to be checked for empty values,
     <input type="submit" value="register" />
 </form>
 ```
+
+Now, once the form is submitted, the validation plugin will be called and your form is being validated before it is submitted. Keep in mind, that you don't need to add the `novalidate` attribute to turn off browser validation - it will be added automatically once the plugin is initialized.
+
 [See it live on JSFiddle](http://jsfiddle.net/coder13/gnfrmj3z/)
 
-Now, once the form is submitted, the validation plugin will be called.
 
 ### Validation Features
 
