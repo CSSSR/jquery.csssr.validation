@@ -3,7 +3,7 @@ jquery.csssr.validation
 
 **jquery.csssr.validation** is an universal validation plugin, which requires zero JS code to validate the forms on your project. Simply connect it, add a couple of attributes to your forms and here you go, it does all you need.
 
-1. [Getting Started](#getting-started)
+1. [Quickstart](#quickstart)
 2. [Validation Features](#validation-features)
   - [Checking for empty values](#checking-for-empty-values)
   - [Validation based on patterns](#validation-based-on-patterns)
@@ -49,13 +49,20 @@ jquery.csssr.validation
   - [Overriding in individual fields](#overriding-in-individual-fields)
 9. [Options reference](#options-reference)
 
-### Getting Started
+### Quickstart
 
-To initialize the plugin, simply add the `data-validate` attribute to your form. Keep in mind that you *should not* add the `novalidate` attribute. It will be added automatically once the plugin is initialized.
+To initialize the plugin, simply add the `data-validate` attribute to your form. Keep in mind that you *should not* add the `novalidate` attribute. It will be added automatically once the plugin is initialized. Add the `required` attribute the fields you want to be checked for empty values, and set the css class which will be added to the field when the value is empty using the `data-invalid-class` attribute:
 
 ```html
-<form action="..." method="post" data-validate>
-  ...
+<form 
+    id="frmRegister" 
+    action="#" 
+    method="post" 
+    data-validate
+    data-invalid-class="invalid">
+    <input type="text" name="username" placeholder="Username" required />
+    
+    <input type="submit" value="register" />
 </form>
 ```
 
