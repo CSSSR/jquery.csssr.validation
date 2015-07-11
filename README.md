@@ -10,6 +10,8 @@ jquery.csssr.validation
     - [Email validation](#email-validation)
     - [Url validation](#url-validation)
     - [Defining custom patterns](#defining-custom-patterns)
+      - [Patterns for individual fields](#patterns-for-individual-fields)
+      - [Reusable global patterns](#reusable-global-patterns)
 
 ### Getting Started
 
