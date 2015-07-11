@@ -3,6 +3,10 @@ jquery.csssr.validation
 
 **jquery.csssr.validation** is an universal validation plugin, which requires zero JS code to validate the forms on your project. Simply connect it, add a couple of attributes to your forms and here you go, it does all you need.
 
+1. [Getting Started](#getting-started)
+2. [Validation Features](#validation-features)
+  - [Checking for empty values](#checking-for-empty-values)
+
 ### Getting Started
 
 To initialize the plugin, simply add the `data-validate` attribute to your form. Keep in mind that you *should not* add the `novalidate` attribute. It will be added automatically once the plugin is initialized.
