@@ -35,13 +35,14 @@ jquery.csssr.validation
     - [Defining targets the messages will be displayed in](#defining-targets-the-messages-will-be-displayed-in)
     - [Displaying messages for empty values](#displaying-messages-for-empty-values)
     - [Displaying messages for invalid values](#displaying-messages-for-invalid-values)
-4. [Silent validation](#silent-validation)
-5. [Custom validation containers and validation with multiple steps](#custom-validation-containers-and-validation-with-multiple-steps)
-6. [Global plugin configuration](#global-and-local-configuration)
-7. [Overriding of global options](#overriding-of-global-options)
+4. [Understanding validation events](#understanding-validation-events)
+5. [Silent validation](#silent-validation)
+6. [Custom validation containers and validation with multiple steps](#custom-validation-containers-and-validation-with-multiple-steps)
+7. [Global plugin configuration](#global-and-local-configuration)
+8. [Overriding of global options](#overriding-of-global-options)
   - [Overriding in forms or validation containers](#overriding-in-forms-or-validation-containers)
   - [Overriding in individual fields](#overriding-in-individual-fields)
-8. [Options reference](#options-reference)
+9. [Options reference](#options-reference)
 
 ### Getting Started
 
