@@ -51,7 +51,9 @@ jquery.csssr.validation
 
 ### Quickstart
 
-To initialize the plugin, simply add the `data-validate` attribute to your form. Keep in mind that you *should not* add the `novalidate` attribute. It will be added automatically once the plugin is initialized. Add the `required` attribute the fields you want to be checked for empty values, and set the css class which will be added to the field when the value is empty using the `data-invalid-class` attribute:
+To initialize the plugin, simply add the `data-validate` attribute to your form. *Keep in mind that you *should not* add the `novalidate` attribute. It will be added automatically once the plugin is initialized.* 
+
+Add the `required` attribute the fields you want to be checked for empty values, and set the css class which will be added to the field when the value is empty using the `data-invalid-class` attribute. 
 
 ```html
 <form 
@@ -60,12 +62,16 @@ To initialize the plugin, simply add the `data-validate` attribute to your form.
     method="post" 
     data-validate
     data-invalid-class="invalid">
+    
     <input type="text" name="username" placeholder="Username" required />
+    <input type="email" name="username" placeholder="Email" required />
+    <input id="txtPassword" type="password" name="password" placeholder="Password" required />
+    <input type="password" name="password2" placeholder="Confirm password" required data-equal-to="#txtPassword" />
     
     <input type="submit" value="register" />
 </form>
 ```
-[See live on JSFiddle](http://jsfiddle.net/coder13/gnfrmj3z/)
+[See it live on JSFiddle](http://jsfiddle.net/coder13/gnfrmj3z/)
 
 Now, once the form is submitted, the validation plugin will be called.
 
