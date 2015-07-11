@@ -65,6 +65,7 @@ To initialize the plugin, simply add the `data-validate` attribute to your form.
     <input type="submit" value="register" />
 </form>
 ```
+[See live on JSFiddle](http://jsfiddle.net/coder13/gnfrmj3z/)
 
 Now, once the form is submitted, the validation plugin will be called.
 
