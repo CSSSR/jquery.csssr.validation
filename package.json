@@ -1,7 +1,7 @@
 {
   "name": "jquery.csssr.validation",
-  "version": "1.0.0",
-  "description": "Universal form validator",
+  "version": "0.0.1",
+  "description": "Universal validation plugin",
   "repository": {
     "type": "git",
     "url": "https://github.com/azanov/jquery.csssr.validation"
