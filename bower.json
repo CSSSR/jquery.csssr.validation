@@ -1,0 +1,32 @@
+{
+  "name": "jquery.csssr.validation",
+  "main": "jquery.csssr.validation.min.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/CSSSR/jquery.csssr.validation",
+  "authors": [
+    "Pavel Azanov <pavel@azanov.de>"
+  ],
+  "description": "Universal validation plugin",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "validation",
+    "validator"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CSSSR/jquery.csssr.validation.git"
+  }
+}
