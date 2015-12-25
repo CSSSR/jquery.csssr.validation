@@ -195,4 +195,19 @@ Should you have a numeric field, mostly two things are required - limiting the c
 
 [See it live on JSFiddle](http://jsfiddle.net/coder13/7L11ys29/)
 
+#### Linking fields to check for equal values
+
+A common practice in registration forms is to ask the user to input his password twice and validate if the values in both password fields match. The plugin can help you to easily link two fields with each other using the `data-equal-to` attribute, which accepts a selector as its value:
+
+```html
+<!-- 
+  Two password fields linked to each other and 
+  validated to have matching values
+--> 
+<input id="txtPassword" type="password" name="password" placeholder="Password" required />
+<input type="password" name="password2" placeholder="Confirm password" required data-equal-to="#txtPassword" />
+```
+
+[See it live on JSFiddle](http://jsfiddle.net/coder13/4zywdgj2/)
+
 ****
