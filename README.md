@@ -131,22 +131,17 @@ The built-in validation pattern for emails is using the following regex:
 To make it work, simply set the type of your input to `email`.
 
 ```html
-<form action="..." method="post" data-validate>
+<!-- 
+  A required email field, first will be checked for 
+  an empty value, then validated based on pattern 
+--> 
+<input type="email" name="email" required>
   
-  <!-- 
-    A required email field, first will be checked for 
-    an empty value, then validated based on pattern 
-  --> 
-  <input type="email" name="email" required>
-  
-  <!--
-    An optional email field, empty values are allowed,
-    pattern validation triggered when a value is entered.
-  -->
-  <input type="email" name="optional_email">
-  
-  <input type="submit" value="send">
-</form>
+<!--
+  An optional email field, empty values are allowed,
+  pattern validation triggered when a value is entered.
+-->
+<input type="email" name="optional_email">
 ```
 
 ##### Url validation
@@ -160,22 +155,31 @@ The built-in validation pattern for urls is using the following regex:
 To make it work, simply set the type of your input to `url`.
 
 ```html
-<form action="..." method="post" data-validate>
+<!-- 
+  A required url field, first will be checked for 
+  an empty value, then validated based on pattern 
+--> 
+<input type="url" name="link" required>
   
-  <!-- 
-    A required url field, first will be checked for 
-    an empty value, then validated based on pattern 
-  --> 
-  <input type="url" name="link" required>
-  
-  <!--
-    An optional url field, empty values are allowed,
-    pattern validation triggered when a value is entered.
-  -->
-  <input type="url" name="optional_link">
-  
-  <input type="submit" value="send">
-</form>
+<!--
+  An optional url field, empty values are allowed,
+  pattern validation triggered when a value is entered.
+-->
+<input type="url" name="optional_link">
 ```
+
+#### Input length validation
+
+Sometimes you need to validate the length of the string the user has filled in a field. Use the `minlength` and `maxlength` attributes to achieve the correct behavior. Should you set the `maxlength` attribute, the library will also take care of that the user cannot input more characters than required:
+
+```html
+<!-- 
+  A required field, you have to enter at east 3 characters
+  and cannot enter more than 10 characters
+--> 
+<input type="text" name="username" minlength="3" maxlength="10" required>
+```
+
+[See it live on JSFiddle](http://jsfiddle.net/coder13/kpo1bgo6/)
 
 ****
