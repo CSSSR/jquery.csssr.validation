@@ -182,4 +182,17 @@ Sometimes you need to validate the length of the string the user has filled in a
 
 [See it live on JSFiddle](http://jsfiddle.net/coder13/kpo1bgo6/)
 
+#### Validating min and max values of numeric fields
+
+Should you have a numeric field, mostly two things are required - limiting the characters to numeric only, as well as setting the minimum and maximum allowed values. Set the `inputmode` attribute of your field to `numeric` and use the `min` and `max` attributes to limit the number range. Should the user input a value below or above the given limits, the plugin will automatically correct the entered value.
+
+```html
+<!-- 
+  A required numeric field, accepts numbers from 18 to 100
+--> 
+<input type="text" name="age" inputmode="numeric" min="18" max="100" required>
+```
+
+[See it live on JSFiddle](http://jsfiddle.net/coder13/7L11ys29/)
+
 ****
