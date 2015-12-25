@@ -210,4 +210,19 @@ A common practice in registration forms is to ask the user to input his password
 
 [See it live on JSFiddle](http://jsfiddle.net/coder13/4zywdgj2/)
 
+#### Allowing empty values
+
+You have a field you need be validated when the user has entered a value and still allow empty values? Use the `data-allow-empty` attribute.
+
+```html
+<!-- 
+  A required email field, which is only checked 
+  when the user enters a value
+--> 
+<input type="email" name="email" placeholder="Email" required data-allow-empty>
+```
+
+[See it live on JSFiddle](http://jsfiddle.net/coder13/c8b2bbyc/)
+
+
 ****
