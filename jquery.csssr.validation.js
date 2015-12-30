@@ -1,6 +1,6 @@
 /*
 	Universal validation plugin
-	(c) 2014 Pavel Azanov, developed for CSSSR
+	(c) 2014 - 2015 Pavel Azanov, developed for CSSSR
 
 	----
 
@@ -139,10 +139,14 @@
 			masks: {
 				numbered: {
 					has: function ($field) {
-						return $field.hasClass('numbered');
+						return $field.length && typeof $field[0].numbered !== 'undefined';
 					},
-					valid: function ($field) {
-						return !$field.hasClass('numbered_error');
+					valid: function ($field, allowEmpty) {
+						var vld = this.has($field) && (new Numbered($field)).validate();
+						return vld > 0 || (allowEmpty && vld === 0);
+					},
+					init: function ($field) {
+						(new Numbered($field));
 					}
 				},
 				inputmask: {
@@ -391,7 +395,7 @@
 						isEmpty = !$field.val(),
 						fieldValid = isCheckBox ? ($field.length && $field[0].checked) : (
 							(allowEmpty && isEmpty) ||
-							(mask && mask.valid($field)) ||
+							(mask && mask.valid($field, allowEmpty)) ||
 							(pattern.length && methods.matchesPatterns($field.val(), pattern)) ||
 							(!mask && !pattern.length && valLength > 0)
 						) &&
