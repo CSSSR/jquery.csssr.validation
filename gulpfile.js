@@ -12,6 +12,11 @@ gulp.task('uglify', function () {
 		.pipe(uglify({preserveComments: 'some'}))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('./'));
+
+	gulp.src(['jquery.csssr.validation.js'])
+		.pipe(uglify({preserveComments: 'some'}))
+		.pipe(rename({basename: 'index'}))
+		.pipe(gulp.dest('./'));
 });
 
 gulp.task('jscs', function () {
