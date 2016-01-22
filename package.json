@@ -1,7 +1,7 @@
 {
   "name": "jquery.csssr.validation",
   "main": "index.js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Universal validation plugin",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "url": "https://github.com/azanov/jquery.csssr.validation/issues"
   },
   "homepage": "https://github.com/azanov/jquery.csssr.validation",
-  "dependencies": {
+  "devDependencies": {
     "gulp": "^3.8.5",
     "gulp-jscs": "^1.1.2",
     "gulp-jshint": "^1.8.4",
