@@ -1,6 +1,6 @@
 /*
 	Universal validation plugin
-	(c) 2014 - 2015 Pavel Azanov, developed for CSSSR
+	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
 	----
 
@@ -103,7 +103,10 @@
 			'empty-value-msg',
 			'invalid-value-msg',
 			'empty-msg-target',
-			'invalid-msg-target'
+			'invalid-msg-target',
+
+			'max-validation-level',
+			'inherit-validation-options'
 
 		];
 
@@ -135,6 +138,10 @@
 			removeInvalidClassOn: 'focus',
 			validateFieldsOn: false,
 			silentValidationOn: false,
+
+			maxValidationLevel: Number.MAX_VALUE,
+
+			inheritValidationOptions: false,
 
 			masks: {
 				numbered: {
@@ -185,9 +192,11 @@
 				var base = $.data(e.target, pluginName),
 					valid = methods.validate.apply(base, []);
 
-				if (!valid) {
+				if (!valid || e.type === 'validate') {
 					e.stopImmediatePropagation();
-				} else {
+				}
+
+				if (valid) {
 					base.element.trigger('valid');
 				}
 
@@ -376,8 +385,24 @@
 				$fields.each(function () {
 
 					var $field = $(this),
-						fieldOptions = methods.getDataOptions($field),
-						mask = methods.getMask($field, options.masks),
+						fieldOptions = methods.getDataOptions($field);
+
+					if (
+						typeof fieldOptions.maxValidationLevel !== 'undefined' &&
+						Number(fieldOptions.maxValidationLevel) < Number.MAX_VALUE
+					) {
+						var validParentsCount =
+							$field
+								.parents('[data-validate], [data-validation-container]')
+								.filter(function (i, el) {
+									return fieldOptions.maxValidationLevel >= i && el === base.element[0];
+								}).length;
+						if (!validParentsCount) {
+							return true;
+						}
+					}
+
+					var	mask = methods.getMask($field, options.masks),
 						pattern = mask ?
 							false :
 							methods.getPattern.apply(base, [$field, 'type', options.patternAttribute, options.patterns]),
@@ -464,12 +489,25 @@
 	function CsssrValidation(element, options) {
 
 		this.element = element;
+
+		var elementOptions = methods.getDataOptions(element),
+			inheritedOptions = {};
+
+		if (elementOptions.inheritValidationOptions) {
+			var $closest = $(element).parents('[data-validate], [data-validation-container]');
+
+			if ($closest.length) {
+				inheritedOptions = methods.getDataOptions($closest.eq(0));
+			}
+		}
+
 		this.options = $.extend(
 			true,
 			{},
 			$[pluginName].defaults,
 			$[pluginName].globals,
-			methods.getDataOptions(element),
+			inheritedOptions,
+			elementOptions,
 			options
 		);
 		this.init();
@@ -558,10 +596,15 @@
 
 		$('body').onFirst('validate.csssr', '[data-validation-container]:not([novalidate])', function (e) {
 
+			var $self = $(this);
+			if ($self.data(pluginName)) {
+				return true;
+			}
+
 			e.preventDefault();
 			e.stopImmediatePropagation();
 
-			$(this)
+			$self
 				.csssrValidation()
 				.trigger('validate.csssr');
 
