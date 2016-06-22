@@ -2,6 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
+	Version: 0.0.9
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
