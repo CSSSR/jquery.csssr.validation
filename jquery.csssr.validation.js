@@ -246,18 +246,28 @@
 				}
 
 			},
+			isSpecialKey: function (keyCode, ctrlKey) {
+
+				// Allow: backspace, delete, tab, escape and enter
+				if ($.inArray(keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+					// Allow: Ctrl+A
+					(keyCode === 65 && ctrlKey === true) ||
+					// Allow: home, end, left, right
+					(keyCode >= 35 && keyCode <= 39)) {
+					// let it happen, don't do anything
+					return true;
+				}
+				return false;
+
+			},
 			_onKeyDown: function (e) {
 
 				var $this = $(this),
 					base = $this.closest('form, [data-validation-container]').data(pluginName),
 					numeric = $this.filter(base.options.numericSelector).length;
 
-				// Allow: backspace, delete, tab, escape and enter
-				if (!numeric || $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
-					// Allow: Ctrl+A
-					(e.keyCode === 65 && e.ctrlKey === true) ||
-					// Allow: home, end, left, right
-					(e.keyCode >= 35 && e.keyCode <= 39)) {
+
+				if (!numeric || methods.isSpecialKey(e.keyCode, e.ctrlKey)) {
 					// let it happen, don't do anything
 					return;
 				}
@@ -278,6 +288,10 @@
 							[$this, base.options.inputmodeAttribute, base.options.inputPatternAttribute, base.options.inputPatterns]),
 					maxlength = $this.attr(base.options.maxlengthAttribute) || Number.POSITIVE_INFINITY,
 					c = e.key || String.fromCharCode(e.which || e.keyCode);
+
+				if (methods.isSpecialKey(e.keyCode, e.ctrlKey)) {
+					return;
+				}
 
 				return $this.val().length <= maxlength && (!pattern.length || methods.matchesPatterns(c, pattern));
 
