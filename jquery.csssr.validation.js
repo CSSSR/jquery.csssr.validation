@@ -337,10 +337,20 @@
 				$.each(tmp, function (i, t) {
 
 					var invert = t[0] === '!';
-					if (patterns[invert ? t.slice(1) : t] !== void 0) {
-						result.push(invert ? function (value) {
-							return invert === (value.match(new RegExp(patterns[t.slice(1)])) === null);
-						} : new RegExp(patterns[t]));
+					t = invert ? t.slice(1) : t;
+
+					if (patterns[t] !== void 0) {
+
+						if ($.isFunction(patterns[t])) {
+							result.push(invert ? function (value) {
+								return !patterns[t](value);
+							} : patterns[t]);
+						} else {
+							result.push(invert ? function (value) {
+								return invert === (value.match(new RegExp(patterns[t])) === null);
+							} : new RegExp(patterns[t]));
+						}
+
 					}
 
 				});
