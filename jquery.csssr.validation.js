@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.9
+	Version: 0.0.10
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -225,8 +225,9 @@
 				var $this = $(this),
 					base = $this.closest('form, [data-validation-container]').data(pluginName);
 
-				// TODO: handle tag name based selection
-				methods.toggleClass($this, false, base.options.invalidClass, base.options.invalidClassTarget);
+				methods.toggleClass($this, false,
+					methods.getClass.apply(base, $field, 'invalid'),
+					methods.getClassTarget.apply(base, $field, 'invalid'));
 
 			},
 			_onBlur: function () {
@@ -387,6 +388,22 @@
 				});
 				return valid;
 			},
+			getClass: function ($field, prefix) {
+				var fieldOptions = methods.getDataOptions($field),
+					options = $.extend(true, {}, this.options, $[pluginName].globals || {});
+
+				return fieldOptions[prefix + 'Class'] ||
+						options[prefix + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
+						options[prefix + 'Class'];
+			},
+			getClassTarget: function ($field, prefix) {
+				var fieldOptions = methods.getDataOptions($field),
+					options = $.extend(true, {}, this.options, $[pluginName].globals || {});
+
+				return fieldOptions[prefix + 'ClassTarget'] ||
+						options[prefix + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
+						options[prefix + 'ClassTarget'];
+			},
 			validate: function ($fields, silent) {
 
 				var base = this,
@@ -436,7 +453,7 @@
 							!$field.filter(options.requiredSelector).length,
 						maxlength = $field.attr(options.maxlengthAttribute) || Number.POSITIVE_INFINITY,
 						minlength = $field.attr(options.minlengthAttribute) || 0,
-						valLength = $field.val().length,
+						valLength = ($field.val() || '').length,
 						isNumeric = $field.filter(options.numericSelector).length,
 						min = $field.attr(options.minAttribute),
 						max = $field.attr(options.maxAttribute),
@@ -463,14 +480,8 @@
 						methods.toggleClass(
 							$field,
 							!fieldValid,
-
-							fieldOptions.invalidClass ||
-								options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
-								options.invalidClass,
-
-							fieldOptions.invalidClassTarget ||
-								options['invalid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
-								options.invalidClassTarget
+							methods.getClass($field, 'invalid'),
+							methods.getClassTarget($field, 'invalid')
 						);
 
 						// TODO: normalize the shitty checking
@@ -491,14 +502,8 @@
 						methods.toggleClass(
 							$field,
 							fieldValid,
-
-							fieldOptions.validClass ||
-								options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'Class'] ||
-								options.validClass,
-
-							fieldOptions.validClassTarget ||
-								options['valid' + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
-								options.validClassTarget
+							methods.getClass($field, 'valid'),
+							methods.getClassTarget($field, 'valid')
 						);
 					}
 
