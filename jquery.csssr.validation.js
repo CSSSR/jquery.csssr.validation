@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.14
+	Version: 0.0.15
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -106,6 +106,8 @@
 			'invalid-value-msg',
 			'empty-msg-target',
 			'invalid-msg-target',
+			'invalid-length-msg',
+			'invalid-length-msg-target',
 
 			'max-validation-level',
 			'inherit-validation-options'
@@ -331,11 +333,12 @@
 
 				var type = $field.attr(typeOrMode),
 					pattern = $field.attr(patternAttr),
+					flags = $field.attr(patternAttr + '-flags'),
 					result = [],
 					tmp = type ? type.split(',') : [];
 
 				if (pattern) {
-					result.push(new RegExp(pattern));
+					result.push(new RegExp(pattern, flags));
 				}
 
 				$.each(tmp, function (i, t) {
@@ -351,7 +354,7 @@
 							} : patterns[t]);
 						} else {
 							result.push(invert ? function (value) {
-								return invert === (value.match(new RegExp(patterns[t])) === null);
+								return invert === (value.match(new RegExp(patterns[t], flags)) === null);
 							} : new RegExp(patterns[t]));
 						}
 
@@ -462,13 +465,14 @@
 						equalTo = $field.data('equal-to'),
 						isCheckBox = ($field.attr(options.typeAttribute) || '').toLowerCase() === 'checkbox',
 						isEmpty = !$field.val(),
+						validLength = (valLength >= Number(minlength) && valLength <= Number(maxlength)),
 						fieldValid = isCheckBox ? ($field.length && $field[0].checked) : (
 							(allowEmpty && isEmpty) ||
 							(mask && mask.valid($field, allowEmpty)) ||
 							(pattern.length && methods.matchesPatterns($field.val(), pattern)) ||
 							(!mask && !pattern.length && valLength > 0)
 						) &&
-						(valLength >= Number(minlength) && valLength <= Number(maxlength)) &&
+						validLength &&
 						(!isNumeric ||
 							(min === void 0 || Number(min) <= Number($field.val())) &&
 							(max === void 0 || Number(max) >= Number($field.val()))
@@ -491,14 +495,22 @@
 						var emptyValueMsg = fieldOptions.emptyValueMsg || options.emptyValueMsg || false,
 							emptyMsgTarget = fieldOptions.emptyMsgTarget || fieldOptions.msgTarget || options.emptyMsgTarget || options.msgTarget || false,
 							invalidValueMsg = fieldOptions.invalidValueMsg || options.invalidValueMsg || false,
-							invalidMsgTarget = fieldOptions.invalidMsgTarget || fieldOptions.msgTarget || options.invalidMsgTarget || options.msgTarget || false;
+							invalidMsgTarget = fieldOptions.invalidMsgTarget || fieldOptions.msgTarget || options.invalidMsgTarget || options.msgTarget || false,
+							invalidLengthMsg = fieldOptions.invalidLengthMsg || options.invalidLengthMsg || false,
+							invalidLengthMsgTarget = fieldOptions.invalidLengthMsgTarget || fieldOptions.msgTarget || options.invalidLengthMsgTarget || options.msgTarget || false;
 
 						if (emptyValueMsg && emptyMsgTarget) {
 							methods.getTarget($field, emptyMsgTarget).text(isEmpty ? emptyValueMsg : '');
 						}
 
-						if (!isEmpty && invalidValueMsg && invalidMsgTarget) {
-							methods.getTarget($field, invalidMsgTarget).text(!fieldValid ? invalidValueMsg : '');
+						if (!isEmpty) {
+							if (invalidLengthMsg && invalidLengthMsgTarget) {
+								methods.getTarget($field, invalidLengthMsgTarget).text(!validLength ? invalidLengthMsg : '');
+							}
+
+							if (validLength && invalidValueMsg && invalidMsgTarget) {
+								methods.getTarget($field, invalidMsgTarget).text(!fieldValid ? invalidValueMsg : '');
+							}
 						}
 
 						methods.toggleClass(
