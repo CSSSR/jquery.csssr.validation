@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.11
+	Version: 0.0.12
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -226,8 +226,8 @@
 					base = $this.closest('form, [data-validation-container]').data(pluginName);
 
 				methods.toggleClass($this, false,
-					methods.getClass.apply(base, $this, 'invalid'),
-					methods.getClassTarget.apply(base, $this, 'invalid'));
+					methods.getClass.apply(base, [$this, 'invalid']),
+					methods.getClassTarget.apply(base, [$this, 'invalid']));
 
 			},
 			_onBlur: function () {
@@ -480,8 +480,8 @@
 						methods.toggleClass(
 							$field,
 							!fieldValid,
-							methods.getClass($field, 'invalid'),
-							methods.getClassTarget($field, 'invalid')
+							methods.getClass.apply(base, [$field, 'invalid']),
+							methods.getClassTarget.apply(base, [$field, 'invalid'])
 						);
 
 						// TODO: normalize the shitty checking
@@ -502,8 +502,8 @@
 						methods.toggleClass(
 							$field,
 							fieldValid,
-							methods.getClass($field, 'valid'),
-							methods.getClassTarget($field, 'valid')
+							methods.getClass.apply(base, [$field, 'valid']),
+							methods.getClassTarget.apply(base, [$field, 'valid'])
 						);
 					}
 
