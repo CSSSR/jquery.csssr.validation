@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.12
+	Version: 0.0.13
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -101,6 +101,7 @@
 			'validate-fields-on',
 			'silent-validation-on',
 
+			'msg-target',
 			'empty-value-msg',
 			'invalid-value-msg',
 			'empty-msg-target',
@@ -131,6 +132,7 @@
 			maxAttribute: 'max',
 			typeAttribute: 'type',
 
+			msgTarget: false,
 			emptyValueMsg: '',
 			emptyMsgTarget: false,
 			invalidValueMsg: '',
@@ -487,9 +489,9 @@
 						// TODO: normalize the shitty checking
 
 						var emptyValueMsg = fieldOptions.emptyValueMsg || options.emptyValueMsg || false,
-							emptyMsgTarget = fieldOptions.emptyMsgTarget || options.emptyMsgTarget || false,
+							emptyMsgTarget = fieldOptions.emptyMsgTarget || fieldOptions.msgTarget || options.emptyMsgTarget || options.msgTarget || false,
 							invalidValueMsg = fieldOptions.invalidValueMsg || options.invalidValueMsg || false,
-							invalidMsgTarget = fieldOptions.invalidMsgTarget || options.invalidMsgTarget || false;
+							invalidMsgTarget = fieldOptions.invalidMsgTarget || fieldOptions.msgTarget || options.invalidMsgTarget || options.msgTarget || false;
 
 						if (emptyValueMsg && emptyMsgTarget) {
 							methods.getTarget($field, emptyMsgTarget).text(isEmpty ? emptyValueMsg : '');
