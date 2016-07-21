@@ -1,7 +1,7 @@
 {
   "name": "jquery.csssr.validation",
   "main": "jquery.csssr.validation.min.js",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "homepage": "https://github.com/CSSSR/jquery.csssr.validation",
   "authors": [
     "Pavel Azanov <pavel@azanov.de>"
