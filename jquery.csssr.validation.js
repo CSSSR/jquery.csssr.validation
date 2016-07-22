@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.15
+	Version: 0.0.16
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -96,6 +96,7 @@
 			'min-attribute',
 			'max-attribute',
 			'type-attribute',
+			'trim-attribute',
 
 			'remove-invalid-class-on',
 			'validate-fields-on',
@@ -133,6 +134,7 @@
 			minAttribute: 'min',
 			maxAttribute: 'max',
 			typeAttribute: 'type',
+			trimAttribute: 'data-trim',
 
 			msgTarget: false,
 			emptyValueMsg: '',
@@ -241,7 +243,12 @@
 					isNumeric = $this.filter(base.options.numericSelector).length,
 					isRequired = $this.filter(base.options.requiredSelector).length,
 					min = $this.attr(base.options.minAttribute),
-					max = $this.attr(base.options.maxAttribute);
+					max = $this.attr(base.options.maxAttribute),
+					trimType = $this.attr(base.options.trimAttribute) || false;
+
+				if (trimType) {
+					$this.val(methods.trim($this.val() || '', trimType));
+				}
 
 				if (isNumeric && (isRequired || $this.val())) {
 					if (min > Number($this.val())) {
@@ -264,6 +271,22 @@
 					return true;
 				}
 				return false;
+
+			},
+			trim: function (value, trimType) {
+
+				if (!trimType) {
+					return value;
+				}
+
+				if (trimType === 'left') {
+					value = value.replace(/^\s+/, '');
+				} else if (trimType === 'right') {
+					value = value.replace(/\s+$/, '');
+				} else {
+					value = value.replace(/^\s+|\s+$/g, '');
+				}
+				return value;
 
 			},
 			_onKeyDown: function (e) {
@@ -299,8 +322,33 @@
 					return;
 				}
 
-				return $this.val().length <= maxlength && (!pattern.length || methods.matchesPatterns(c, pattern));
+				return $this.val().length <= maxlength && (!pattern || methods.matchesPatterns(c, pattern));
 
+			},
+			_onPaste: function () {
+				var $this = $(this),
+					base = $this.closest('form, [data-validation-container]').data(pluginName),
+					mask = methods.getMask($this, base.options.masks),
+					trimType = $this.attr(base.options.trimAttribute) || false,
+					pattern = mask ?
+						false :
+						methods.getPattern.apply(base,
+							[$this, base.options.inputmodeAttribute, base.options.inputPatternAttribute, base.options.inputPatterns]);
+
+				setTimeout(function () {
+					if (pattern) {
+						var value = methods.trim($this.val() || '', trimType),
+							filteredValue = '';
+
+						filteredValue = $.map(value.split(''), function (c) {
+							return methods.matchesPatterns(c, pattern) ? c : '';
+						}).join('');
+
+						filteredValue = methods.trim(filteredValue || '', trimType);
+
+						$this.val(filteredValue);
+					}
+				}, 100);
 			},
 			getDataOptions: function ($element) {
 
@@ -566,7 +614,9 @@
 
 			_this.element.on('keydown', _this.options.numericSelector, methods._onKeyDown);
 			_this.element.on('keypress', _this.options.inputmodeSelector, methods._onKeyPress);
+			_this.element.on('paste', _this.options.inputmodeSelector, methods._onPaste);
 			_this.element.on('blur', _this.options.minMaxSelector, methods._onBlur);
+			_this.element.on('blur', _this.options.inputmodeSelector, methods._onBlur);
 
 			_this.element
 				.attr('novalidate', true)
