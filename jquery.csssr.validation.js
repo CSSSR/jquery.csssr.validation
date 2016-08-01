@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.16
+	Version: 0.0.17
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -111,7 +111,8 @@
 			'invalid-length-msg-target',
 
 			'max-validation-level',
-			'inherit-validation-options'
+			'inherit-validation-options',
+			'trigger-field-events'
 
 		];
 
@@ -149,6 +150,7 @@
 			maxValidationLevel: Number.MAX_VALUE,
 
 			inheritValidationOptions: false,
+			triggerFieldEvents: false,
 
 			masks: {
 				numbered: {
@@ -203,9 +205,7 @@
 					e.stopImmediatePropagation();
 				}
 
-				if (valid) {
-					base.element.trigger('valid');
-				}
+				base.element.trigger(valid ? 'valid' : 'invalid');
 
 				return valid;
 
@@ -528,6 +528,10 @@
 
 					if (fieldValid && equalTo) {
 						fieldValid = $(equalTo).val() === $field.val();
+					}
+
+					if (options.triggerFieldEvents || fieldOptions.triggerFieldEvents) {
+						$field.trigger(fieldValid ? 'valid' : 'invalid');
 					}
 
 					if (!silent) {
