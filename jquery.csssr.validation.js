@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.17
+	Version: 0.0.18
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -386,7 +386,11 @@
 					tmp = type ? type.split(',') : [];
 
 				if (pattern) {
-					result.push(new RegExp(pattern, flags));
+					var invert = pattern[0] === '!';
+					pattern = invert ? pattern.slice(1) : pattern;
+					result.push(invert ? function (value) {
+						return invert === (value.match(new RegExp(pattern, flags)) === null);
+					} : new RegExp(pattern, flags));
 				}
 
 				$.each(tmp, function (i, t) {
@@ -403,7 +407,7 @@
 						} else {
 							result.push(invert ? function (value) {
 								return invert === (value.match(new RegExp(patterns[t], flags)) === null);
-							} : new RegExp(patterns[t]));
+							} : new RegExp(patterns[t], flags));
 						}
 
 					}
