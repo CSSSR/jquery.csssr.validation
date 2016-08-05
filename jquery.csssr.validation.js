@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.18
+	Version: 0.0.19
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -236,7 +236,7 @@
 					methods.getClassTarget.apply(base, [$this, 'invalid']));
 
 			},
-			_onBlur: function () {
+			_onBlur: function (e) {
 
 				var $this = $(this),
 					base = $this.closest('form, [data-validation-container]').data(pluginName),
@@ -244,11 +244,22 @@
 					isRequired = $this.filter(base.options.requiredSelector).length,
 					min = $this.attr(base.options.minAttribute),
 					max = $this.attr(base.options.maxAttribute),
-					trimType = $this.attr(base.options.trimAttribute) || false;
+					trimType = $this.attr(base.options.trimAttribute) || false,
+					lastChar = $this.data('jcv-last-char') || false,
+					trimmedValue = methods.trim($this.val() || '', trimType);
 
-				if (trimType) {
-					$this.val(methods.trim($this.val() || '', trimType));
+				if (
+					trimType &&
+					(
+						e.type === 'blur' ||
+						e.type === 'focusout' ||
+						(trimType !== 'right' && lastChar === ' ' && !trimmedValue)
+					)
+				) {
+					$this.val(trimmedValue);
 				}
+
+				$this.data('jcv-last-char', null);
 
 				if (isNumeric && (isRequired || $this.val())) {
 					if (min > Number($this.val())) {
@@ -316,13 +327,21 @@
 						methods.getPattern.apply(base,
 							[$this, base.options.inputmodeAttribute, base.options.inputPatternAttribute, base.options.inputPatterns]),
 					maxlength = $this.attr(base.options.maxlengthAttribute) || Number.POSITIVE_INFINITY,
-					c = e.key || String.fromCharCode(e.which || e.keyCode);
+					c = e.key || String.fromCharCode(e.which || e.keyCode),
+					trimType = $this.attr(base.options.trimAttribute) || false,
+					trimmedValue = methods.trim($this.val(), trimType);
 
 				if (methods.isSpecialKey(e.keyCode, e.ctrlKey)) {
 					return;
 				}
 
-				return $this.val().length <= maxlength && (!pattern || methods.matchesPatterns(c, pattern));
+				if (c === ' ' && trimType && trimType !== 'right' && trimmedValue === '') {
+					return false;
+				}
+
+				$this.data('jcv-last-char', c);
+
+				return $this.val().length <= maxlength && (!pattern || methods.matchesPatterns(c, pattern, $this));
 
 			},
 			_onPaste: function () {
@@ -341,7 +360,7 @@
 							filteredValue = '';
 
 						filteredValue = $.map(value.split(''), function (c) {
-							return methods.matchesPatterns(c, pattern) ? c : '';
+							return methods.matchesPatterns(c, pattern, $this) ? c : '';
 						}).join('');
 
 						filteredValue = methods.trim(filteredValue || '', trimType);
@@ -438,10 +457,10 @@
 				}
 
 			},
-			matchesPatterns: function (value, patterns) {
+			matchesPatterns: function (value, patterns, $field) {
 				var valid = true;
 				$.each(patterns, function (i, p) {
-					valid = valid && ($.isFunction (p) ? p(value) : (value.match(p) !== null));
+					valid = valid && ($.isFunction (p) ? p(value, $field) : (value.match(p) !== null));
 				});
 				return valid;
 			},
@@ -501,6 +520,12 @@
 						}
 					}
 
+					var trimType = $field.attr(options.trimAttribute) || false;
+
+					if (trimType) {
+						$field.val(methods.trim($field.val() || '', trimType));
+					}
+
 					var	mask = methods.getMask($field, options.masks),
 						pattern = mask ?
 							false :
@@ -521,7 +546,7 @@
 						fieldValid = isCheckBox ? ($field.length && $field[0].checked) : (
 							(allowEmpty && isEmpty) ||
 							(mask && mask.valid($field, allowEmpty)) ||
-							(pattern.length && methods.matchesPatterns($field.val(), pattern)) ||
+							(pattern.length && methods.matchesPatterns($field.val(), pattern, $field)) ||
 							(!mask && !pattern.length && valLength > 0)
 						) &&
 						validLength &&
@@ -621,10 +646,9 @@
 			var _this = this;
 
 			_this.element.on('keydown', _this.options.numericSelector, methods._onKeyDown);
-			_this.element.on('keypress', _this.options.inputmodeSelector, methods._onKeyPress);
-			_this.element.on('paste', _this.options.inputmodeSelector, methods._onPaste);
-			_this.element.on('blur', _this.options.minMaxSelector, methods._onBlur);
-			_this.element.on('blur', _this.options.inputmodeSelector, methods._onBlur);
+			_this.element.on('keypress', _this.options.requiredSelector, methods._onKeyPress);
+			_this.element.on('paste', _this.options.requiredSelector, methods._onPaste);
+			_this.element.on('blur input', _this.options.requiredSelector, methods._onBlur);
 
 			_this.element
 				.attr('novalidate', true)
