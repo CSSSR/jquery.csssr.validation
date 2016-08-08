@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.19
+	Version: 0.0.20
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -560,7 +560,7 @@
 					}
 
 					if (options.triggerFieldEvents || fieldOptions.triggerFieldEvents) {
-						$field.trigger(fieldValid ? 'valid' : 'invalid');
+						$field.trigger(fieldValid ? 'valid' : 'invalid', silent);
 					}
 
 					if (!silent) {
@@ -674,6 +674,12 @@
 
 			});
 
+		},
+		enableSilentValidation: function (event, selector) {
+			var _this = this,
+				selector = selector || 'input, textarea';
+
+			_this.element.on(event, selector, methods._onSilentValidate);
 		},
 		destroy: function () {
 			this.element.off('submit.' + pluginName + ' validate.csssr', methods._onSubmit)
