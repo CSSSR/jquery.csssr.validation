@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.20
+	Version: 0.0.21
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -74,6 +74,7 @@
 			'valid-select-class',
 			'invalid-select-class',
 
+			'class-target',
 			'valid-class-target',
 			'invalid-class-target',
 
@@ -438,7 +439,7 @@
 			},
 			getTarget: function ($field, exSelector) {
 
-				if (exSelector.indexOf('/') !== -1) {
+				if (exSelector && exSelector.indexOf('/') !== -1) {
 					var tmp = exSelector.split('/');
 					return $field[tmp[0]](tmp[1]);
 				} else {
@@ -446,13 +447,32 @@
 				}
 
 			},
-			toggleClass: function ($field, state, cssClass, target) {
+			toggleClass: function ($field, state, cssClass, target, timestamp, vldState, applyValidationState) {
 
 				if (cssClass) {
+
+					var $target = $field;
+
 					if (target) {
-						methods.getTarget($field, target).toggleClass(cssClass, state);
+						$target = methods.getTarget($field, target);
+					}
+
+					var savedTimestamp = $target.data('jcv-timestamp'),
+						savedValidationState = $target.data('jcv-vld-state');
+
+					savedValidationState = (savedValidationState === null ? true : savedValidationState) && vldState;
+
+					if (!timestamp) {
+						$target.toggleClass(cssClass, state);
+					} else if (savedTimestamp !== timestamp) {
+						$target
+							.data('jcv-timestamp', timestamp)
+							.data('jcv-vld-state', vldState)
+							.toggleClass(cssClass, state);
 					} else {
-						$field.toggleClass(cssClass, state);
+						$target
+							.data('jcv-vld-state', savedValidationState)
+							.toggleClass(cssClass, savedValidationState === applyValidationState);
 					}
 				}
 
@@ -477,8 +497,10 @@
 					options = $.extend(true, {}, this.options, $[pluginName].globals || {});
 
 				return fieldOptions[prefix + 'ClassTarget'] ||
+						fieldOptions.classTarget ||
 						options[prefix + methods.capitalize($field[0].tagName.toLowerCase()) + 'ClassTarget'] ||
-						options[prefix + 'ClassTarget'];
+						options[prefix + 'ClassTarget'] ||
+						options.classTarget;
 			},
 			validate: function ($fields, silent) {
 
@@ -492,7 +514,8 @@
 					], function (el) {
 						return el !== '';
 					}).join(','),
-					valid = true;
+					valid = true,
+					timestamp = (new Date()).getTime();
 
 				$fields = $fields ? $fields.filter(selector) : base.element.find(selector);
 
@@ -556,7 +579,8 @@
 						);
 
 					if (fieldValid && equalTo) {
-						fieldValid = $(equalTo).val() === $field.val();
+						var $compareField = methods.getTarget($field, equalTo);
+						fieldValid = $compareField.val() === $field.val();
 					}
 
 					if (options.triggerFieldEvents || fieldOptions.triggerFieldEvents) {
@@ -564,11 +588,15 @@
 					}
 
 					if (!silent) {
+
 						methods.toggleClass(
 							$field,
 							!fieldValid,
 							methods.getClass.apply(base, [$field, 'invalid']),
-							methods.getClassTarget.apply(base, [$field, 'invalid'])
+							methods.getClassTarget.apply(base, [$field, 'invalid']),
+							timestamp,
+							fieldValid,
+							false
 						);
 
 						// TODO: normalize the shitty checking
@@ -598,7 +626,10 @@
 							$field,
 							fieldValid,
 							methods.getClass.apply(base, [$field, 'valid']),
-							methods.getClassTarget.apply(base, [$field, 'valid'])
+							methods.getClassTarget.apply(base, [$field, 'valid']),
+							timestamp,
+							fieldValid,
+							true
 						);
 					}
 
@@ -676,8 +707,8 @@
 
 		},
 		enableSilentValidation: function (event, selector) {
-			var _this = this,
-				selector = selector || 'input, textarea';
+			var _this = this;
+			selector = selector || 'input, textarea';
 
 			_this.element.on(event, selector, methods._onSilentValidate);
 		},
