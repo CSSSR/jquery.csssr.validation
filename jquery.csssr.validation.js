@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.21
+	Version: 0.0.22
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -332,7 +332,8 @@
 					trimType = $this.attr(base.options.trimAttribute) || false,
 					trimmedValue = methods.trim($this.val(), trimType);
 
-				if (methods.isSpecialKey(e.keyCode, e.ctrlKey)) {
+				// ignore enter
+				if (e.keyCode === 13) {
 					return;
 				}
 
