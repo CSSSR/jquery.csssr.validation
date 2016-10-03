@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.22
+	Version: 0.0.23
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -441,8 +441,17 @@
 			getTarget: function ($field, exSelector) {
 
 				if (exSelector && exSelector.indexOf('/') !== -1) {
-					var tmp = exSelector.split('/');
-					return $field[tmp[0]](tmp[1]);
+					var tmp = exSelector.split('/'),
+						result = $field;
+
+					for (var i = 0; i < tmp.length; i += 2) {
+						if (i + 1 < tmp.length && tmp[i + 1]) {
+							result = result[tmp[i]](tmp[i + 1]);
+						} else {
+							result = result[tmp[i]]();
+						}
+					}
+					return result;
 				} else {
 					return $(exSelector);
 				}
