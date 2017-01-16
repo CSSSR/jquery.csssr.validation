@@ -68,6 +68,9 @@
 			'valid-class',
 			'invalid-class',
 
+			'valid-container-class',
+			'invalid-container-class',
+
 			'valid-textarea-class',
 			'invalid-textarea-class',
 
@@ -200,13 +203,22 @@
 			_onSubmit: function (e) {
 
 				var base = $.data(e.target, pluginName),
-					valid = methods.validate.apply(base, []);
+					valid = methods.validate.apply(base, []),
+					options = $.extend(true, {}, base.options, $[pluginName].globals || {}, methods.getDataOptions(base.element));
 
 				if (!valid || e.type === 'validate') {
 					e.stopImmediatePropagation();
 				}
 
 				base.element.trigger(valid ? 'valid' : 'invalid');
+
+				if (options.validContainerClass) {
+					base.element.toggleClass(options.validContainerClass, valid);
+				}
+
+				if (options.invalidContainerClass) {
+					base.element.toggleClass(options.invalidContainerClass, !valid);
+				}
 
 				return valid;
 

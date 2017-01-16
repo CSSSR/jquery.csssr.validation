@@ -14,7 +14,7 @@ gulp.task('uglify', function () {
 		.pipe(gulp.dest('./'));
 
 	gulp.src(['jquery.csssr.validation.js'])
-		.pipe(uglify({preserveComments: 'some'}))
+		// .pipe(uglify({preserveComments: 'some'}))
 		.pipe(rename({basename: 'index'}))
 		.pipe(gulp.dest('./'));
 });

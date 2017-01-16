@@ -1,7 +1,7 @@
 {
   "name": "jquery.csssr.validation",
   "main": "index.js",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "Universal validation plugin",
   "repository": {
     "type": "git",
