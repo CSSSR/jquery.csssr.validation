@@ -2,7 +2,7 @@
 	Universal validation plugin
 	(c) 2014 - 2016 Pavel Azanov, developed for CSSSR
 
-	Version: 0.0.23
+	Version: 0.0.24
 	----
 
 	Using parts of jQuery.bind-first (https://github.com/private-face/jquery.bind-first)
@@ -116,7 +116,9 @@
 
 			'max-validation-level',
 			'inherit-validation-options',
-			'trigger-field-events'
+			'trigger-field-events',
+
+			'data-element-selector'
 
 		];
 
@@ -155,6 +157,8 @@
 
 			inheritValidationOptions: false,
 			triggerFieldEvents: false,
+
+			elementSelector: 'input, textarea, select',
 
 			masks: {
 				numbered: {
@@ -708,15 +712,15 @@
 				.onFirst('submit validate.csssr', methods._onSubmit);
 
 			if (_this.options.removeInvalidClassOn) {
-				_this.element.on(_this.options.removeInvalidClassOn, 'input, textarea', methods._onRemoveInvalidClass);
+				_this.element.on(_this.options.removeInvalidClassOn, _this.options.elementSelector, methods._onRemoveInvalidClass);
 			}
 
 			if (_this.options.validateFieldsOn) {
-				_this.element.on(_this.options.validateFieldsOn, 'input, textarea', methods._onValidateField);
+				_this.element.on(_this.options.validateFieldsOn, _this.options.elementSelector, methods._onValidateField);
 			}
 
 			if (_this.options.silentValidationOn) {
-				_this.element.on(_this.options.silentValidationOn, 'input, textarea', methods._onSilentValidate);
+				_this.element.on(_this.options.silentValidationOn, _this.options.elementSelector, methods._onSilentValidate);
 			}
 
 			$.each(_this.options.masks, function (key, mask) {
@@ -730,7 +734,7 @@
 		},
 		enableSilentValidation: function (event, selector) {
 			var _this = this;
-			selector = selector || 'input, textarea';
+			selector = selector || _this.options.elementSelector;
 
 			_this.element.on(event, selector, methods._onSilentValidate);
 		},
