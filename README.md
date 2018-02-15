@@ -10,6 +10,9 @@ bower i jquery.csssr.validation
 ```
 npm i jquery.csssr.validation
 ```
+--------------
+
+**Important**: If haven't done it yet, please upgrade to version 0.0.26, it contains an important fix for the URL validation. The regular expression `^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$` was vulnerable to [REDOS](https://snyk.io/blog/redos-and-catastrophic-backtracking), so it was replaced with a function which uses the URL API and checks the protocol to match `http(s):`. Thanks to **James Davis** for the finding. Also consider upgrading your own projects if you reused the mentioned regular expression anywhere else.
 
 --------------
 
@@ -63,25 +66,25 @@ npm i jquery.csssr.validation
 
 Let's begin with a simple registration form with four fields: **username**, **email**, **password** and **password confirmation**.
 
-1. To initialize the plugin, add the `data-validate` attribute to your form. 
+1. To initialize the plugin, add the `data-validate` attribute to your form.
 2. Add the `required` attribute to the fields you want to be checked for empty values.
-3. Set the type of the email field to `email`. 
+3. Set the type of the email field to `email`.
 4. Using the `data-invalid-class` attribute, define the CSS class which will be added to the field when its value is empty.
 5. Link the password & password confirmation fields with the `data-equal-to` attribute:
 
 ```html
-<form 
-    id="frmRegister" 
-    action="#" 
-    method="post" 
+<form
+    id="frmRegister"
+    action="#"
+    method="post"
     data-validate
     data-invalid-class="invalid">
-    
+
     <input type="text" name="username" placeholder="Username" required />
     <input type="email" name="username" placeholder="Email" required />
     <input id="txtPassword" type="password" name="password" placeholder="Password" required />
     <input type="password" name="password2" placeholder="Confirm password" required data-equal-to="#txtPassword" />
-    
+
     <input type="submit" value="register" />
 </form>
 ```
@@ -95,7 +98,7 @@ Now, once the form is submitted, the validation plugin will be called and your f
 
 #### Checking for empty values
 
-Add the `required` attribute to a field to make the plugin check if a value is filled in.  
+Add the `required` attribute to a field to make the plugin check if a value is filled in.
 
 ```html
 <input type="text" name="username" required>
@@ -131,12 +134,12 @@ The built-in validation pattern for emails is using the following regex:
 To make it work, simply set the type of your input to `email`.
 
 ```html
-<!-- 
-  A required email field, first will be checked for 
-  an empty value, then validated based on pattern 
---> 
+<!--
+  A required email field, first will be checked for
+  an empty value, then validated based on pattern
+-->
 <input type="email" name="email" required>
-  
+
 <!--
   An optional email field, empty values are allowed,
   pattern validation triggered when a value is entered.
@@ -155,12 +158,12 @@ The built-in validation pattern for urls is using the following regex:
 To make it work, simply set the type of your input to `url`.
 
 ```html
-<!-- 
-  A required url field, first will be checked for 
-  an empty value, then validated based on pattern 
---> 
+<!--
+  A required url field, first will be checked for
+  an empty value, then validated based on pattern
+-->
 <input type="url" name="link" required>
-  
+
 <!--
   An optional url field, empty values are allowed,
   pattern validation triggered when a value is entered.
@@ -173,10 +176,10 @@ To make it work, simply set the type of your input to `url`.
 Sometimes you need to validate the length of the string the user has filled in a field. Use the `minlength` and `maxlength` attributes to achieve the correct behavior. Should you set the `maxlength` attribute, the library will also take care of that the user cannot input more characters than required:
 
 ```html
-<!-- 
+<!--
   A required field, you have to enter at east 3 characters
   and cannot enter more than 10 characters
---> 
+-->
 <input type="text" name="username" minlength="3" maxlength="10" required>
 ```
 
@@ -187,9 +190,9 @@ Sometimes you need to validate the length of the string the user has filled in a
 Should you have a numeric field, mostly two things are required - limiting the characters to numeric only, as well as setting the minimum and maximum allowed values. Set the `inputmode` attribute of your field to `numeric` and use the `min` and `max` attributes to limit the number range. Should the user input a value below or above the given limits, the plugin will automatically correct the entered value.
 
 ```html
-<!-- 
+<!--
   A required numeric field, accepts numbers from 18 to 100
---> 
+-->
 <input type="text" name="age" inputmode="numeric" min="18" max="100" required>
 ```
 
@@ -200,10 +203,10 @@ Should you have a numeric field, mostly two things are required - limiting the c
 A common practice in registration forms is to ask the user to input his password twice and validate if the values in both password fields match. The plugin can help you to easily link two fields with each other using the `data-equal-to` attribute, which accepts a selector as its value:
 
 ```html
-<!-- 
-  Two password fields linked to each other and 
+<!--
+  Two password fields linked to each other and
   validated to have matching values
---> 
+-->
 <input id="txtPassword" type="password" name="password" placeholder="Password" required />
 <input type="password" name="password2" placeholder="Confirm password" required data-equal-to="#txtPassword" />
 ```
@@ -215,10 +218,10 @@ A common practice in registration forms is to ask the user to input his password
 You have a field you need be validated when the user has entered a value and still allow empty values? Use the `data-allow-empty` attribute.
 
 ```html
-<!-- 
-  A required email field, which is only checked 
+<!--
+  A required email field, which is only checked
   when the user enters a value
---> 
+-->
 <input type="email" name="email" placeholder="Email" required data-allow-empty>
 ```
 
