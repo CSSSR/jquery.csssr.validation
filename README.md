@@ -1,6 +1,8 @@
 jquery.csssr.validation
 =======================
 
+[![Known Vulnerabilities](https://snyk.io/test/npm/jquery.csssr.validation/badge.svg)](https://snyk.io/test/npm/jquery.csssr.validation)
+
 **jquery.csssr.validation** is an universal validation plugin, which requires zero JS code to validate the forms on your project. Simply connect it, add a couple of attributes to your forms and here you go, it does all you need.
 
 ```
